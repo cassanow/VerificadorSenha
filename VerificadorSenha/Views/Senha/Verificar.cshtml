@@ -2,48 +2,68 @@
     ViewData["Title"] = "Verificador de Senha";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4">Verificador de Senha</h2>
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="p-4 rounded shadow bg-white" style="max-width: 500px; width: 100%;">
+        <h2 class="mb-4 text-center fw-bold">
+            Verificador de Senha
+        </h2>
 
-    <input type="password" id="senha" class="form-control mb-3" placeholder="Digite sua senha">
-    
-    <ul id="criterios-list" class="list-unstyled"></ul>
+        <div class="mb-3 position-relative">
+            <input type="password" id="senha" class="form-control form-control-lg" placeholder="Digite sua senha" autocomplete="off">
+            <button type="button" id="toggleSenha" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2">
+                ⚫
+            </button>
+        </div>
 
-    <div id="status" class="alert alert-secondary">Digite uma senha</div>
+        <ul id="criterios-list" class="list-group mb-3"></ul>
+
+        <div id="status" class="alert alert-secondary text-center">
+            Digite uma senha
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        $("#toggleSenha").on("click", function () {
+            var input = $("#senha");
+            var type = input.attr("type") === "password" ? "text" : "password";
+            input.attr("type", type);
+            $(this).text(type === "password" ? "⚪" : "⚫");
+        });
+
         $("#senha").on("input", function () {
             var senha = $(this).val();
 
             $.ajax({
-                url: '@Url.Action("Verificar", "Senha")', 
+                url: '@Url.Action("Verificar", "Senha")',
                 type: 'POST',
                 data: { senha: senha },
                 success: function (data) {
                     $("#criterios-list").empty();
 
                     data.criterios.forEach(function (c) {
-                        var icon = c.atendido? "✅" : "❌";
-                        var color = c.atendido ? "text-success" : "text-danger";
+                        var icon = c.atendido ? "✅" : "❌";
+                        var color = c.atendido ? "list-group-item-success" : "list-group-item-danger";
 
                         $("#criterios-list").append(
-                            `<li class="${color}">${icon} ${c.descricao}</li>`
+                            `<li class="list-group-item d-flex align-items-center ${color}">
+                                <span class="me-2 fs-5">${icon}</span> ${c.descricao}
+                            </li>`
                         );
                     });
 
                     if (data.essencial) {
                         $("#status")
                             .removeClass()
-                            .addClass("alert alert-success")
-                            .text("Senha Essencial!");
+                            .addClass("alert alert-success text-center fw-bold")
+                            .text("Senha essencial! ✅");
                     } else {
                         $("#status")
                             .removeClass()
-                            .addClass("alert alert-danger")
-                            .text("Senha não atende todos os critérios");
+                            .addClass("alert alert-danger text-center fw-bold")
+                            .text("Senha não atende todos os requisitos ❌");
                     }
                 }
             });

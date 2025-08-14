@@ -28,7 +28,7 @@ public class SenhaController : Controller
             new CriterioSenha { descricao = "Pelo menos uma letra minuscula", atendido = _senhaService.VerificarMinusculas(senha) },
             new CriterioSenha { descricao = "Pelo menos um caractere especial (!, @, #, $, %, ^, &, *)", atendido = _senhaService.VerificarCaractereEspecial(senha) },
             new CriterioSenha { descricao = "Pelo menos um numero", atendido = _senhaService.VerificarCaractereNumerico(senha) },
-            new CriterioSenha { descricao = "Minimo 10 caracteres", atendido = senha.Length >= 10 }
+            new CriterioSenha { descricao = "Minimo 15 caracteres", atendido = senha.Length >= 15 }
         };
 
         return Json(new
