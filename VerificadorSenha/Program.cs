@@ -1,7 +1,12 @@
+using VerificadorSenha.Interface;
+using VerificadorSenha.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<ISenhaService, SenhaService>();
 
 var app = builder.Build();
 
@@ -22,6 +27,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Senha}/{action=Verificar}/{id?}");
 
 app.Run();
