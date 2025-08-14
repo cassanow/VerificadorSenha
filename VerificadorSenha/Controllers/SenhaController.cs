@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VerificadorSenha.Interface;
+using VerificadorSenha.Models;
 
 namespace VerificadorSenha.Controllers;
 
@@ -19,10 +20,21 @@ public class SenhaController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Verificar(string senha)
+    public IActionResult Verificar(string senha)
     {
-        
-        
-        return View(senha);
+        var criterios = new List<CriterioSenha>
+        {
+            new CriterioSenha { descricao = "Pelo menos uma letra maiuscula", atendido = _senhaService.VerificarMaiusculas(senha) },
+            new CriterioSenha { descricao = "Pelo menos uma letra minuscula", atendido = _senhaService.VerificarMinusculas(senha) },
+            new CriterioSenha { descricao = "Pelo menos um caractere especial (!, @, #, $, %, ^, &, *)", atendido = _senhaService.VerificarCaractereEspecial(senha) },
+            new CriterioSenha { descricao = "Pelo menos um numero", atendido = _senhaService.VerificarCaractereNumerico(senha) },
+            new CriterioSenha { descricao = "Minimo 10 caracteres", atendido = senha.Length >= 10 }
+        };
+
+        return Json(new
+        {
+            essencial = criterios.All(c => c.atendido),
+            criterios,
+        });
     }
 }

@@ -7,35 +7,36 @@ public class SenhaService : ISenhaService
 {
     public bool VerificarCaractereEspecial(string senha)
     {
-        var caracteresEspeciais = new List<char> { '!', '@', '#', '$', '%', '^', '&', '*'};
+        var caracteresEspeciais = new List<char> { '!', '@', '#', '$', '%', '^', '&', '*' };
 
         var senhaChar = TransformarEmChar(senha);
 
         for (int i = 0; i < senhaChar.Length; i++)
         {
-            if (senhaChar[i] != caracteresEspeciais[i])
+            if (caracteresEspeciais.Contains(senhaChar[i]))
             {
-                return false;
+                return true;
             }
         }
-       
-        return true;
+
+        return false;
     }
 
     public bool VerificarCaractereNumerico(string senha)
     {
-        var numeros = new List<char> {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
-        
+        var numeros = new List<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
         var senhaChar = TransformarEmChar(senha);
 
         for (int i = 0; i < senhaChar.Length; i++)
         {
-            if (senhaChar[i] != numeros[i])
+            if (numeros.Contains(senhaChar[i]))
             {
-                return false;
+                return true;
             }
         }
-        return true;
+
+        return false;
     }
 
     public bool VerificarMaiusculas(string senha)
@@ -45,17 +46,18 @@ public class SenhaService : ISenhaService
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
             'W', 'X', 'Y', 'Z'
         };
-        
+
         var senhaChar = TransformarEmChar(senha);
 
         for (int i = 0; i < senhaChar.Length; i++)
         {
-            if (senhaChar[i] != letrasMaiusculas[i])
+            if (letrasMaiusculas.Contains(senhaChar[i]))
             {
-                return false;
+                return true;
             }
         }
-        return true;
+
+        return false;
     }
 
     public bool VerificarMinusculas(string senha)
@@ -65,17 +67,18 @@ public class SenhaService : ISenhaService
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
             'w', 'x', 'y', 'z'
         };
-        
+
         var senhaChar = TransformarEmChar(senha);
 
         for (int i = 0; i < senhaChar.Length; i++)
         {
-            if (senhaChar[i] != letrasMinusculas[i])
+            if (letrasMinusculas.Contains(senhaChar[i]))
             {
-                return false;
+                return true;
             }
         }
-        return true;
+
+        return false;
     }
 
     public char[] TransformarEmChar(string senha)
