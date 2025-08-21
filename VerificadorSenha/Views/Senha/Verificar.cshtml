@@ -11,7 +11,7 @@
         <div class="mb-3 position-relative">
             <input type="password" id="senha" class="form-control form-control-lg" placeholder="Digite sua senha" autocomplete="off">
             <button type="button" id="toggleSenha" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2">
-                ⚫
+                <i class="bi bi-eye"></i>
             </button>
         </div>
 
@@ -23,50 +23,57 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $("#toggleSenha").on("click", function () {
-            var input = $("#senha");
-            var type = input.attr("type") === "password" ? "text" : "password";
-            input.attr("type", type);
-            $(this).text(type === "password" ? "⚪" : "⚫");
+        document.getElementById("toggleSenha").addEventListener("click", function () {
+            const input = document.getElementById("senha");
+            const icon = this.querySelector("i");
+            const isPassword = input.type === "password";
+
+            input.type = isPassword ? "text" : "password";
+            
+            icon.classList.toggle("bi-eye", !isPassword);
+            icon.classList.toggle("bi-eye-slash", isPassword);
         });
+        document.getElementById("senha").addEventListener("input", function () {
+            const senha = this.value;
 
-        $("#senha").on("input", function () {
-            var senha = $(this).val();
+            fetch('@Url.Action("Verificar", "Senha")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: new URLSearchParams({ senha: senha })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const criteriosList = document.getElementById("criterios-list");
+                    criteriosList.innerHTML = "";
 
-            $.ajax({
-                url: '@Url.Action("Verificar", "Senha")',
-                type: 'POST',
-                data: { senha: senha },
-                success: function (data) {
-                    $("#criterios-list").empty();
+                    data.criterios.forEach(c => {
+                        const icon = c.atendido ? "✅" : "❌";
+                        const color = c.atendido ? "list-group-item-success" : "list-group-item-danger";
 
-                    data.criterios.forEach(function (c) {
-                        var icon = c.atendido ? "✅" : "❌";
-                        var color = c.atendido ? "list-group-item-success" : "list-group-item-danger";
-
-                        $("#criterios-list").append(
+                        criteriosList.insertAdjacentHTML(
+                            "beforeend",
                             `<li class="list-group-item d-flex align-items-center ${color}">
-                                <span class="me-2 fs-5">${icon}</span> ${c.descricao}
-                            </li>`
+                        <span class="me-2 fs-5">${icon}</span> ${c.descricao}
+                    </li>`
                         );
                     });
 
+                    const status = document.getElementById("status");
                     if (data.essencial) {
-                        $("#status")
-                            .removeClass()
-                            .addClass("alert alert-success text-center fw-bold")
-                            .text("Senha essencial!");
+                        status.className = "alert alert-success text-center fw-bold";
+                        status.textContent = "Senha essencial!";
                     } else {
-                        $("#status")
-                            .removeClass()
-                            .addClass("alert alert-danger text-center fw-bold")
-                            .text("Senha não atende todos os requisitos");
+                        status.className = "alert alert-danger text-center fw-bold";
+                        status.textContent = "Senha não atende todos os requisitos";
                     }
-                }
-            });
+                });
         });
     </script>
+}
+
 }
